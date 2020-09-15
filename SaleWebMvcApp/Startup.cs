@@ -11,6 +11,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using SaleWebMvcApp.Data;
+using SaleWebMvcApp.Models.ModelsService;
 
 namespace SaleWebMvcApp
 {
@@ -32,21 +33,25 @@ namespace SaleWebMvcApp
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
+                       
 
             services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
             services.AddDbContext<SaleWebMvcAppContext>(options =>
                     options.UseMySql(Configuration.GetConnectionString("SaleWebMvcAppContext"), builder =>
                     builder.MigrationsAssembly("SaleWebMvcApp")));
+
+           services.AddScoped<SeedingService>();
+           services.AddScoped<SellerService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IHostingEnvironment env, SeedingService seedingService)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
+                seedingService.Seed();
             }
             else
             {
