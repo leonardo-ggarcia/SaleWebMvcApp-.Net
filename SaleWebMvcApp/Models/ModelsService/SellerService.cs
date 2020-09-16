@@ -19,5 +19,12 @@ namespace SaleWebMvcApp.Models.ModelsService
         {
             return _context.Seller.ToList();
         }
+      
+        public void insert(Seller objSeller)
+        {
+            objSeller.department = _context.Department.First();
+            _context.Seller.Add(objSeller);
+            _context.SaveChanges();
+        }
     }
 }
